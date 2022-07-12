@@ -27,7 +27,7 @@ struct Line{
     }
 
     //пересекаются ли две линии
-    bool is_intersect(Line& other) const{
+    bool is_intersect(const Line& other) const{
         // точка пересечения двух линий
         double is_x = -(C * other.B - B * other.C) / A * other.B - B * other.A;
         double is_y = -(A * other.C - C * other.A) / A * other.B - B * other.A;
@@ -46,10 +46,13 @@ struct Line{
 
 
 };
+
+//сторона пирамиды
 struct Side{
     Side(const Line& a, const Line& b, const Line& c){
-
+        assert(a.is_intersect(b) && c.is_intersect(a) && b.is_intersect(c));
     }
+
 };
 
 class Triangle3D{
