@@ -16,6 +16,7 @@ struct Point{
     };
 };
 
+//ребро пирамиды
 struct Line{
     double A = 0, B = 0, C = 0;
 
@@ -27,7 +28,7 @@ struct Line{
     }
 
     //пересекаются ли две линии
-    bool is_intersect(const Line& other) const{
+    bool is_line_intersect(const Line& other) const{
         // точка пересечения двух линий
         double is_x = -(C * other.B - B * other.C) / A * other.B - B * other.A;
         double is_y = -(A * other.C - C * other.A) / A * other.B - B * other.A;
@@ -37,20 +38,44 @@ struct Line{
     }
 
     //угол между линиями
-    float angle(Line& other) const {
+    float angle(const Line& other) const {
         float cos = A * other.A + B * other.B /  sqrt(A * A + B * B)
                 * sqrt (other.A * other.A + other.B * other.B);
-        return cos;
+        return acos(cos);
     };
 
 
 
 };
 
-//сторона пирамиды
+//грань пирамиды
 struct Side{
-    Side(const Line& a, const Line& b, const Line& c){
-        assert(a.is_intersect(b) && c.is_intersect(a) && b.is_intersect(c));
+    Line a_, b_, c_;
+    Side(const Line& a, const Line& b, const Line& c): a_(a), b_(b), c_(c){
+        assert(a.is_line_intersect(b) && c.is_line_intersect(a) && b.is_line_intersect(c));
+        assert(a.angle(b) + b.angle(c) + c.angle(a) < 180);
+    }
+
+    //пересечение граней
+    bool is_side_intersect(const Side& other) const{
+        if (a_.is_line_intersect(other.a_) || a_.is_line_intersect(other.b_) || a_.is_line_intersect(other.c_)
+        || b_.is_line_intersect(other.a_) || b_.is_line_intersect(other.b_) || b_.is_line_intersect(other.c_)
+        || c_.is_line_intersect(other.a_) || c_.is_line_intersect(other.b_) || c_.is_line_intersect(other.c_))
+            return true;
+    }
+};
+
+//пирамида (состоит из четырёх граней, которые пересекаются по ребрам)
+struct Triangle{
+    Side s1_, s2_, s3_, s4_;
+    constexpr Triangle(const Side& s1, const Side& s2, const Side& s3, const Side& s4): s1_(s1), s2_(s2),
+    s3_(s3), s4_(s4){
+        assert(s1_.is_side_intersect(s2_) && s2.is_side_intersect(s3_) && s3.is_side_intersect(s1_) && s1.is_side_intersect(s4_));
+    }
+
+    //пересечение пирамид
+    bool is_triangle_intersect(const Triangle& other) const{
+
     }
 
 };
