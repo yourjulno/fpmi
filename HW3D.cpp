@@ -15,28 +15,41 @@ struct Point{
         assert(is_valid() && other.is_valid());
     };
 };
-struct vec{
-    double X, Y, Z, size;
-    vec(const Point& p1, const Point& p2){
-        X = p1.x - p2.x; // координата направляющего вектора по х
-        Y = p1.y - p2.y; // координата направляющего вектора по y
-        Z = p1.z - p2.z; // координата направляющего вектора по z
-        size = std::sqrt(X*X + Y*Y + Z*Z);
-    }
-};
+
 struct Line{
-    double size_of_line, x, y, z;
-    constexpr Line (const vec& a){
-        size_of_line = a.size;
-        x = a.X;
-        y = a.Y;
-        z = a.Z;
+    double A = 0, B = 0, C = 0;
+
+    //Ax + By + C = 0
+    constexpr Line (const Point& p1, const Point& p2){
+        A = p2.y - p1.y;
+        B = p1.x - p2.x;
+        C = p1.y * p2.x - p1.x * p2.y;
     }
 
-    bool is_intersect(Line& other){
-        if(x)
+    //пересекаются ли две линии
+    bool is_intersect(Line& other) const{
+        // точка пересечения двух линий
+        double is_x = -(C * other.B - B * other.C) / A * other.B - B * other.A;
+        double is_y = -(A * other.C - C * other.A) / A * other.B - B * other.A;
+        if (A * is_x + B * is_y + C == 0 )
+            return true;
+        else return false;
     }
 
+    //угол между линиями
+    float angle(Line& other) const {
+        float cos = A * other.A + B * other.B /  sqrt(A * A + B * B)
+                * sqrt (other.A * other.A + other.B * other.B);
+        return cos;
+    };
+
+
+
+};
+struct Side{
+    Side(const Line& a, const Line& b, const Line& c){
+
+    }
 };
 
 class Triangle3D{
